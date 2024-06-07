@@ -70,7 +70,7 @@ public:
 	 * returns: bit in position i
 	 * only access! the bitvector is static.
 	 */
-	bool operator[](ulint i){
+	bool operator[](const ulint i) const {
 
 		assert(i<size());
 		return bv[i];
@@ -81,7 +81,7 @@ public:
 	 * argument: position i in the bitvector
 	 * returns: number of bits equal to 1 before position i excluded
 	 */
-	ulint rank(ulint i){
+	ulint rank(const ulint i) const {
 
 		assert(i<=size());
 		return rank1(i);
@@ -92,7 +92,7 @@ public:
 	 * argument: integer i>=0
 	 * returns: position of the i-th one in the bitvector. i starts from 0!
 	 */
-	ulint select(ulint i){
+	ulint select(const ulint i) const {
 
 		assert(i<number_of_1());
 		return select1(i+1);//in sd_vector, i starts from 1
@@ -102,17 +102,17 @@ public:
 	/*
 	* returns: size of the bitvector
 	*/
-	ulint size(){return bv.size();}
+	ulint size() const {return bv.size();}
 
 	/*
 	 * returns: number of 1s in the bitvector
 	 */
-	ulint number_of_1(){return rank1(size()); }
+	ulint number_of_1() const {return rank1(size()); }
 
 	/* serialize the structure to the ostream
 	 * \param out	 the ostream
 	 */
-	ulint serialize(std::ostream& out){
+	ulint serialize(std::ostream& out) const {
 
 		ulint size=0;
 

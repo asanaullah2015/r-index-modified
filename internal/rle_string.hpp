@@ -123,7 +123,7 @@ public:
 
 	}
 
-	uchar operator[](ulint i){
+	uchar operator[](const ulint i) const {
 
 		assert(i<n);
 		return run_heads[run_of(i).first];
@@ -133,7 +133,7 @@ public:
 	/*
 	 * position of i-th character c. i starts from 0!
 	 */
-	ulint select(ulint i, uchar c){
+	ulint select(const ulint i, const uchar c) const {
 
 		assert(i<runs_per_letter[c].size());
 
@@ -167,7 +167,7 @@ public:
 	/*
 	 * number of c before position i
 	 */
-	ulint rank(ulint i, uchar c){
+	ulint rank(const ulint i, const uchar c) const {
 
 		assert(i<=n);
 
@@ -220,7 +220,7 @@ public:
 	/*
 	 * text position i is inside this run
 	 */
-	ulint run_of_position(ulint i){
+	ulint run_of_position(const ulint i) const {
 
 		assert(i<n);
 
@@ -258,7 +258,7 @@ public:
 	//breaks <l',r'> in maximal sub-ranges containing character c.
 	//for simplicity and efficiency, we assume that characters at range extremities are both 'c'
 	//thanks to the encoding (run-length), this function is quite efficient: O(|result|) ranks and selects
-	vector<range_t> break_range(range_t rn,uchar c){
+	vector<range_t> break_range(const range_t rn, const uchar c) const {
 
 		auto l = rn.first;
 		auto r = rn.second;
@@ -301,12 +301,12 @@ public:
 
 	}
 
-	ulint size(){return n;}
+	ulint size() const {return n;}
 
 	/*
 	 * return inclusive range of j-th run in the string
 	 */
-	pair<ulint,ulint> run_range(ulint j){
+	pair<ulint,ulint> run_range(const ulint j) const {
 
 		assert(j<run_heads.size());
 
@@ -328,7 +328,7 @@ public:
 	}
 
 	//length of i-th run
-	ulint run_at(ulint i){
+	ulint run_at(const ulint i) const {
 
 		assert(i<R);
 		uchar c = run_heads[i];
@@ -337,12 +337,12 @@ public:
 
 	}
 
-	ulint number_of_runs(){return R;}
+	ulint number_of_runs() const {return R;}
 
 	/* serialize the structure to the ostream
 	 * \param out	 the ostream
 	 */
-	ulint serialize(std::ostream& out){
+	ulint serialize(std::ostream& out) const {
 
 		ulint w_bytes = 0;
 
@@ -387,7 +387,7 @@ public:
 
 	}
 
-	string toString(){
+	string toString() const {
 
 		string s;
 
@@ -399,7 +399,7 @@ public:
 	}
 
 
-	ulint print_space(){
+	ulint print_space() const {
 
 		ulint tot_bytes = 0;
 
@@ -452,7 +452,7 @@ public:
 	 * rn must contain c and at least another character d!=c
 	 *
 	 */
-	ulint closest_run_break(range_t rn, uchar c){
+	ulint closest_run_break(const range_t rn, const uchar c) const {
 
 		/*
 		 * case 1: range begins with a c-run: return last position of the run
@@ -494,7 +494,7 @@ public:
 
 private:
 
-	static ulint count_runs(string &s){
+	static ulint count_runs(const string &s) {
 
 		ulint runs=1;
 
@@ -509,7 +509,7 @@ private:
 	}
 
 	//<j=run of position i, last position of j-th run>
-	pair<ulint,ulint> run_of(ulint i){
+	pair<ulint,ulint> run_of(const ulint i) const {
 
 		ulint last_block = runs.rank(i);
 		ulint current_run = last_block*B;
@@ -547,7 +547,7 @@ private:
 
 	}
 
-	bool contains0(string &s){
+	bool contains0(const string &s) const {
 
 		for(auto c : s)
 			if(c==0) return true;

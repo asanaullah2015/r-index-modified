@@ -152,14 +152,14 @@ public:
 	/*
 	 * get full BWT range
 	 */
-	range_t full_range(){
+	range_t full_range() const {
 
 		//inclusive range
 		return {0,bwt_size()-1};
 
 	}
 
-	uchar operator[](ulint i ){
+	uchar operator[](const ulint i ) const {
 		return bwt[i];
 	}
 
@@ -168,7 +168,7 @@ public:
 	 * \param c character
 	 * \return inclusive range of cw
 	 */
-	range_t LF(range_t rn, uchar c){
+	range_t LF(const range_t rn, const uchar c) const {
 
 		//if character does not appear in the text, return empty pair
 		if((c==255 and F[c]==bwt_size()) || F[c]>=F[c+1])
@@ -192,7 +192,7 @@ public:
 	/*
 	 * Phi function. Phi(SA[0]) is undefined
 	 */
-	ulint Phi(ulint i){
+	ulint Phi(const ulint i) const {
 
 		assert(i != bwt.size()-1);
 
@@ -221,7 +221,7 @@ public:
 	}
 
 	//backward navigation of the BWT
-	ulint LF(ulint  i){
+	ulint LF(const ulint  i) const {
 
 		auto c = bwt[i];
 		return F[c] + bwt.rank(i,c);
@@ -229,7 +229,7 @@ public:
 	}
 
 	//forward navigation of the BWT
-	ulint FL(ulint  i){
+	ulint FL(const ulint  i) const {
 
 		//i-th character in first BWT column
 		auto c = F_at(i);
@@ -242,7 +242,7 @@ public:
 	}
 
 	//forward navigation of the BWT, where for efficiency we give c=F[i] as input
-	ulint FL(ulint  i, uchar c){
+	ulint FL(const ulint  i, const uchar c) const {
 
 		//i-th character in first BWT column
 		assert(c == F_at(i));
@@ -257,7 +257,7 @@ public:
 	/*
 	 * access column F at position i
 	 */
-	uchar F_at(ulint i){
+	uchar F_at(const ulint i) const {
 
 		ulint c = (upper_bound(F.begin(),F.end(),i) - F.begin()) - 1;
 		assert(c<256);
@@ -270,7 +270,7 @@ public:
 	/*
 	 * Return BWT range of character c
 	 */
-	range_t get_char_range(uchar c){
+	range_t get_char_range(const uchar c) const {
 
 		//if character does not appear in the text, return empty pair
 		if((c==255 and F[c]==bwt_size()) || F[c]>=F[c+1])
@@ -289,7 +289,7 @@ public:
 	/*
 	 * Return BWT range of pattern P
 	 */
-	range_t count(string &P){
+	range_t count(const string &P) const {
 
 		auto range = full_range();
 		ulint m = P.size();
@@ -304,7 +304,7 @@ public:
 	/*
 	 * Return number of occurrences of P in the text
 	 */
-	ulint occ(string &P){
+	ulint occ(const string &P) const {
 
 		auto rn = count(P);
 
@@ -325,7 +325,7 @@ public:
 	 * locate all occurrences of P and return them in an array
 	 * (space consuming if result is big).
 	 */
-	vector<ulint> locate_all(string& P){
+	vector<ulint> locate_all(const string& P) const {
 
 		vector<ulint> OCC;
 
@@ -358,28 +358,28 @@ public:
 	/*
 	 * get number of runs in the BWT (terminator character included)
 	 */
-	ulint number_of_runs(){
+	ulint number_of_runs() const {
 		return bwt.number_of_runs();
 	}
 
 	/*
 	 * get terminator (0x1) position in the BWT
 	 */
-	ulint get_terminator_position(){
+	ulint get_terminator_position() const {
 		return terminator_position;
 	}
 
 	/*
 	 * get BWT in string format
 	 */
-	string get_bwt(){
+	string get_bwt() const {
 		return bwt.toString();
 	}
 
 	/* serialize the structure to the ostream
 	 * \param out	 the ostream
 	 */
-	ulint serialize(std::ostream& out){
+	ulint serialize(std::ostream& out) const {
 
 		ulint w_bytes = 0;
 
@@ -425,7 +425,7 @@ public:
 	 * save the structure to the path specified.
 	 * \param path_prefix prefix of the index files. suffix ".ri" will be automatically added
 	 */
-	void save_to_file(string path_prefix){
+	void save_to_file(const string& path_prefix) const {
 
 		string path = string(path_prefix).append(".ri");
 
@@ -439,7 +439,7 @@ public:
 	 * load the structure from the path specified.
 	 * \param path: full file name
 	 */
-	void load_from_file(string path){
+	void load_from_file(const string& path){
 
 		std::ifstream in(path);
 		load(in);
@@ -447,19 +447,19 @@ public:
 
 	}
 
-	ulint text_size(){
+	ulint text_size() const {
 		return bwt.size()-1;
 	}
 
-	ulint bwt_size(){
+	ulint bwt_size() const {
 		return bwt.size();
 	}
 
-	uchar get_terminator(){
+	uchar get_terminator() const {
 		return TERMINATOR;
 	}
 
-	ulint print_space(){
+	ulint print_space() const {
 
 		cout << "Number of runs = " << bwt.number_of_runs() << endl<<endl;
 
@@ -479,7 +479,7 @@ private:
 	 * returns <range, j,k>
 	 *
 	 */
-	pair<range_t, ulint> count_and_get_occ(string &P){
+	pair<range_t, ulint> count_and_get_occ(const string &P) const {
 
 		//k = SA[r]
 		ulint k = 0;
@@ -550,7 +550,7 @@ private:
 	 * to first letters in BWT runs (plus their ranks from 0 to R-1), and text positions corresponding
 	 * to last letters in BWT runs (in BWT order)
 	 */
-	tuple<string, vector<pair<ulint, ulint> >, vector<ulint> > sufsort(string &s){
+	tuple<string, vector<pair<ulint, ulint> >, vector<ulint> > sufsort(const string &s) const {
 
 		string bwt_s;
 
@@ -633,7 +633,7 @@ private:
 
 	}
 
-	static bool contains_reserved_chars(string &s){
+	static bool contains_reserved_chars(const string &s){
 
 		for(auto c : s)
 			if(c == 0 or c == 1)

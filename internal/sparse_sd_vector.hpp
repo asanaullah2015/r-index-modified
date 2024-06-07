@@ -89,14 +89,14 @@ public:
 	 * returns: bit in position i
 	 * only access! the bitvector is static.
 	 */
-	bool operator[](ulint i){
+	bool operator[](const ulint i) const {
 
 		assert(i<size());
 		return sdv[i];
 
 	}
 
-	bool at(ulint i){
+	bool at(const ulint i) const {
 		return operator[](i);
 	}
 
@@ -104,7 +104,7 @@ public:
 	 * argument: position i in the bitvector
 	 * returns: number of bits equal to 1 before position i excluded
 	 */
-	ulint rank(ulint i){
+	ulint rank(const ulint i) const {
 
 		assert(i<=size());
 		return rank1(i);
@@ -116,7 +116,7 @@ public:
 	 * output: predecessor of i (position i excluded) in
 	 * rank space (apply select to get bitvector space)
 	 */
-	ulint predecessor_rank(ulint i){
+	ulint predecessor_rank(const ulint i) const {
 
 		/*
 		 * i must have a predecessor
@@ -132,7 +132,7 @@ public:
 	 * output: predecessor of i (i excluded) in
 	 * bitvector space
 	 */
-	ulint predecessor(ulint i){
+	ulint predecessor(const ulint i) const {
 
 		/*
 		 * i must have a predecessor
@@ -150,7 +150,7 @@ public:
 	 * bitvector space. If i does not have a predecessor,
 	 * return rank of the last bit set in the bitvector
 	 */
-	ulint predecessor_rank_circular(ulint i){
+	ulint predecessor_rank_circular(const ulint i) const {
 
 		return rank(i)==0 ? number_of_1()-1 : rank(i)-1;
 
@@ -161,7 +161,7 @@ public:
 	 * \param i<number_of_1()
 	 *
 	 */
-	ulint gapAt(ulint i){
+	ulint gapAt(const ulint i) const {
 
 		assert(i<number_of_1());
 
@@ -175,7 +175,7 @@ public:
 	 * argument: integer i>0
 	 * returns: position of the i-th one in the bitvector. i starts from 0!
 	 */
-	ulint select(ulint i){
+	ulint select(const ulint i) const {
 
 		assert(i<number_of_1());
 		return select1(i+1);//in sd_vector, i starts from 1
@@ -185,17 +185,17 @@ public:
 	/*
 	* returns: size of the bitvector
 	*/
-	ulint size(){return u;}
+	ulint size() const {return u;}
 
 	/*
 	 * returns: number of 1s in the bitvector
 	 */
-	ulint number_of_1(){return rank1(size()); }
+	ulint number_of_1() const {return rank1(size()); }
 
 	/* serialize the structure to the ostream
 	 * \param out	 the ostream
 	 */
-	ulint serialize(std::ostream& out){
+	ulint serialize(std::ostream& out) const {
 
 		ulint w_bytes = 0;
 
