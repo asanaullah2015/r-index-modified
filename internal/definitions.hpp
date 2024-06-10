@@ -32,7 +32,8 @@
 #include <assert.h>
 #include <tuple>
 
-using namespace std;
+
+//using namespace std;
 
 namespace ri{
 
@@ -46,7 +47,7 @@ typedef unsigned char uchar;
 typedef unsigned char symbol;
 typedef unsigned char uint8;
 
-typedef pair<ulint,ulint> range_t;
+typedef std::pair<ulint,ulint> range_t;
 
 }
 

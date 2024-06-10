@@ -16,8 +16,8 @@
 
 #include <sdsl/wavelet_trees.hpp>
 
-using namespace sdsl;
-using namespace std;
+//using namespace sdsl;
+//using namespace std;
 
 namespace ri{
 
@@ -27,10 +27,10 @@ public:
 
 	huff_string(){}
 
-	huff_string(string &s){
+	huff_string(std::string &s){
 
 		s.push_back(0);
-		construct_im(wt, s.c_str(), 1);
+		sdsl::construct_im(wt, s.c_str(), 1);
 
 		assert(wt.size()==s.size()-1);
 
@@ -85,7 +85,7 @@ private:
 
 	//wt_gmr<> wt;
 
-	wt_huff<> wt;
+	sdsl::wt_huff<> wt;
 
 };
 

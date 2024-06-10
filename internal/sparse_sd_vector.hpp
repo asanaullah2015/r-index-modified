@@ -14,8 +14,8 @@
 
 #include <vector>
 
-using namespace std;
-using namespace sdsl;
+//using namespace std;
+//using namespace sdsl;
 
 #ifndef ulint
 typedef uint64_t ulint;
@@ -39,40 +39,40 @@ public:
 	/*
 	 * constructor. build bitvector given a vector of bools
 	 */
-	sparse_sd_vector(vector<bool> &b){
+	sparse_sd_vector(std::vector<bool> &b){
 
 		if(b.size()==0) return;
 
 		u = b.size();
 
-		bit_vector bv(b.size());
+		sdsl::bit_vector bv(b.size());
 
 		for(uint64_t i=0;i<b.size();++i)
 			bv[i] = b[i];
 
-		sdv = sd_vector<>(bv);
-		rank1 = sd_vector<>::rank_1_type(&sdv);
-		select1 = sd_vector<>::select_1_type(&sdv);
+		sdv = sdsl::sd_vector<>(bv);
+		rank1 = sdsl::sd_vector<>::rank_1_type(&sdv);
+		select1 = sdsl::sd_vector<>::select_1_type(&sdv);
 
 	}
 
 	/*
 	 * constructor. build bitvector given a bit_vector
 	 */
-	sparse_sd_vector(bit_vector &bv){
+	sparse_sd_vector(sdsl::bit_vector &bv){
 
-		sdv = sd_vector<>(bv);
-		rank1 = sd_vector<>::rank_1_type(&sdv);
-		select1 = sd_vector<>::select_1_type(&sdv);
+		sdv = sdsl::sd_vector<>(bv);
+		rank1 = sdsl::sd_vector<>::rank_1_type(&sdv);
+		select1 = sdsl::sd_vector<>::select_1_type(&sdv);
 
 	}
 
 	sparse_sd_vector & operator= (const sparse_sd_vector & other) {
 
 		u = other.sdv.size();
-		sdv = sd_vector<>(other.sdv);
-		rank1 = sd_vector<>::rank_1_type(&sdv);
-		select1 = sd_vector<>::select_1_type(&sdv);
+		sdv = sdsl::sd_vector<>(other.sdv);
+		rank1 = sdsl::sd_vector<>::rank_1_type(&sdv);
+		select1 = sdsl::sd_vector<>::select_1_type(&sdv);
 
 	    return *this;
 	}
@@ -221,8 +221,8 @@ public:
 		if(u==0) return;
 
 		sdv.load(in);
-		rank1 = sd_vector<>::rank_1_type(&sdv);
-		select1 = sd_vector<>::select_1_type(&sdv);
+		rank1 = sdsl::sd_vector<>::rank_1_type(&sdv);
+		select1 = sdsl::sd_vector<>::select_1_type(&sdv);
 
 	}
 
@@ -231,9 +231,9 @@ private:
 	//bitvector length
 	ulint u = 0;
 
-	sd_vector<> sdv;
-	sd_vector<>::rank_1_type rank1;
-	sd_vector<>::select_1_type select1;
+	sdsl::sd_vector<> sdv;
+	sdsl::sd_vector<>::rank_1_type rank1;
+	sdsl::sd_vector<>::select_1_type select1;
 
 };
 

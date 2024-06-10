@@ -49,7 +49,7 @@ public:
 	 * \param B block size. The main sparse bitvector has R/B bits set (R being number of runs)
 	 *
 	 */
-	rle_string(string &input, ulint B = 2){
+	rle_string(std::string &input, ulint B = 2){
 
 		assert(not contains0(input));
 
@@ -57,11 +57,11 @@ public:
 		n = input.size();
 		R = 0;
 
-		auto runs_per_letter_bv = vector<vector<bool> >(256);
+		auto runs_per_letter_bv = std::vector<std::vector<bool> >(256);
 
 		//runs in main bitvector
-		vector<bool> runs_bv;
-		string run_heads_s;
+		std::vector<bool> runs_bv;
+		std::string run_heads_s;
 
 		uchar last_c = input[0];
 
@@ -96,8 +96,8 @@ public:
 		assert(run_heads_s.size()==R);
 		assert(R==count_runs(input));
 
-		//cout << "runs in BWT(input) = " << count_runs(input) << endl;
-		//cout << "runs in rle bwt = " << R << endl << endl;
+		//std::cout << "runs in BWT(input) = " << count_runs(input) << std::endl;
+		//std::cout << "runs in rle bwt = " << R << std::endl << std::endl;
 
 		//now compact structures
 
@@ -112,7 +112,7 @@ public:
 		runs = sparse_bitvector_t(runs_bv);
 
 		//a fast direct array: char -> bitvector.
-		runs_per_letter = vector<sparse_bitvector_t>(256);
+		runs_per_letter = std::vector<sparse_bitvector_t>(256);
 		for(ulint i=0;i<256;++i)
 			runs_per_letter[i] = sparse_bitvector_t(runs_per_letter_bv[i]);
 
@@ -258,7 +258,7 @@ public:
 	//breaks <l',r'> in maximal sub-ranges containing character c.
 	//for simplicity and efficiency, we assume that characters at range extremities are both 'c'
 	//thanks to the encoding (run-length), this function is quite efficient: O(|result|) ranks and selects
-	vector<range_t> break_range(const range_t rn, const uchar c) const {
+	std::vector<range_t> break_range(const range_t rn, const uchar c) const {
 
 		auto l = rn.first;
 		auto r = rn.second;
@@ -276,7 +276,7 @@ public:
 		//in this case rn contains only character c: do not break
 		if(run_l.first==run_r.first) return {rn};
 
-		vector<range_t> result;
+		std::vector<range_t> result;
 
 		//first range: from l to the end of the run containing position l
 		result.push_back({l,run_l.second});
@@ -306,7 +306,7 @@ public:
 	/*
 	 * return inclusive range of j-th run in the string
 	 */
-	pair<ulint,ulint> run_range(const ulint j) const {
+	std::pair<ulint,ulint> run_range(const ulint j) const {
 
 		assert(j<run_heads.size());
 
@@ -378,7 +378,7 @@ public:
 
 		runs.load(in);
 
-		runs_per_letter = vector<sparse_bitvector_t>(256);
+		runs_per_letter = std::vector<sparse_bitvector_t>(256);
 
 		for(ulint i=0;i<256;++i)
 			runs_per_letter[i].load(in);
@@ -387,9 +387,9 @@ public:
 
 	}
 
-	string toString() const {
+	std::string toString() const {
 
-		string s;
+		std::string s;
 
 		for(ulint i=0;i<size();++i)
 			s.push_back(operator[](i));
@@ -409,7 +409,7 @@ public:
 
 			tot_bytes += bytesize;
 
-			cout << "main runs bitvector: " << bytesize << " Bytes" <<endl;
+			std::cout << "main runs bitvector: " << bytesize << " Bytes" <<std::endl;
 
 		}
 
@@ -422,7 +422,7 @@ public:
 
 			tot_bytes += bytesize;
 
-			cout << "runs-per-letter bitvectors: " << bytesize << " Bytes" <<endl;
+			std::cout << "runs-per-letter bitvectors: " << bytesize << " Bytes" <<std::endl;
 
 		}
 
@@ -433,7 +433,7 @@ public:
 
 			tot_bytes += bytesize;
 
-			cout << "run heads: " << bytesize << " Bytes" <<endl;
+			std::cout << "run heads: " << bytesize << " Bytes" <<std::endl;
 
 		}
 
@@ -494,7 +494,7 @@ public:
 
 private:
 
-	static ulint count_runs(const string &s) {
+	static ulint count_runs(const std::string &s) {
 
 		ulint runs=1;
 
@@ -509,7 +509,7 @@ private:
 	}
 
 	//<j=run of position i, last position of j-th run>
-	pair<ulint,ulint> run_of(const ulint i) const {
+	std::pair<ulint,ulint> run_of(const ulint i) const {
 
 		ulint last_block = runs.rank(i);
 		ulint current_run = last_block*B;
@@ -547,7 +547,7 @@ private:
 
 	}
 
-	bool contains0(const string &s) const {
+	bool contains0(const std::string &s) const {
 
 		for(auto c : s)
 			if(c==0) return true;
@@ -562,7 +562,7 @@ private:
 	sparse_bitvector_t runs;
 
 	//for each letter, its runs stored contiguously
-	vector<sparse_bitvector_t> runs_per_letter;
+	std::vector<sparse_bitvector_t> runs_per_letter;
 
 	//store run heads in a compressed string supporting access/rank
 	string_t run_heads;

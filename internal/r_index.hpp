@@ -21,7 +21,7 @@
 #include "sparse_hyb_vector.hpp"
 #include "utils.hpp"
 
-using namespace sdsl;
+//using namespace sdsl;
 
 namespace ri{
 
@@ -39,37 +39,37 @@ public:
 	/*
 	 * Build index
 	 */
-	r_index(string &input, bool sais = true){
+	r_index(std::string &input, bool sais = true){
 
 		this->sais = sais;
 
 		if(contains_reserved_chars(input)){
 
-			cout << "Error: input string contains one of the reserved characters 0x0, 0x1" << endl;
+			std::cout << "Error: input string contains one of the reserved characters 0x0, 0x1" << std::endl;
 			exit(1);
 
 		}
 
-		cout << "Text length = " << input.size() << endl << endl;
+		std::cout << "Text length = " << input.size() << std::endl << std::endl;
 
-		cout << "(1/3) Building BWT and computing SA samples";
-		if(sais) cout << " (SE-SAIS) ... " << flush;
-		else cout << "(DIVSUFSORT) ... " << flush;
+		std::cout << "(1/3) Building BWT and computing SA samples";
+		if(sais) std::cout << " (SE-SAIS) ... " << std::flush;
+		else std::cout << "(DIVSUFSORT) ... " << std::flush;
 
 		//build run-length encoded BWT
 
 		auto bwt_and_samples = sufsort(input);
 
-		string& bwt_s = get<0>(bwt_and_samples);
-		vector<pair<ulint,ulint> >& samples_first_vec = get<1>(bwt_and_samples);
-		vector<ulint>& samples_last_vec = get<2>(bwt_and_samples);
+		std::string& bwt_s = get<0>(bwt_and_samples);
+		std::vector<std::pair<ulint,ulint> >& samples_first_vec = get<1>(bwt_and_samples);
+		std::vector<ulint>& samples_last_vec = get<2>(bwt_and_samples);
 
-		cout << "done.\n(2/3) RLE encoding BWT ... " << flush;
+		std::cout << "done.\n(2/3) RLE encoding BWT ... " << std::flush;
 
 		bwt = rle_string_t(bwt_s);
 
 		//build F column
-		F = vector<ulint>(256,0);
+		F = std::vector<ulint>(256,0);
 		for(uchar c : bwt_s)
 			F[c]++;
 
@@ -87,7 +87,7 @@ public:
 
 		assert(input.size()+1 == bwt.size());
 
-		cout << "done. " << endl<<endl;
+		std::cout << "done. " << std::endl<<std::endl;
 
 		r = bwt.number_of_runs();
 
@@ -97,12 +97,12 @@ public:
 		int log_r = bitsize(uint64_t(r));
 		int log_n = bitsize(uint64_t(bwt.size()));
 
-		cout << "Number of BWT equal-letter runs: r = " << r << endl;
-		cout << "Rate n/r = " << double(bwt.size())/r << endl;
-		cout << "log2(r) = " << log2(double(r)) << endl;
-		cout << "log2(n/r) = " << log2(double(bwt.size())/r) << endl << endl;
+		std::cout << "Number of BWT equal-letter runs: r = " << r << std::endl;
+		std::cout << "Rate n/r = " << double(bwt.size())/r << std::endl;
+		std::cout << "log2(r) = " << log2(double(r)) << std::endl;
+		std::cout << "log2(n/r) = " << log2(double(bwt.size())/r) << std::endl << std::endl;
 
-		cout << "(3/3) Building phi function ..." << flush;
+		std::cout << "(3/3) Building phi function ..." << std::flush;
 
 		//sort samples of first positions in runs according to text position
 		std::sort(samples_first_vec.begin(), samples_first_vec.end());
@@ -110,7 +110,7 @@ public:
 		//build Elias-Fano predecessor
 		{
 
-			auto pred_bv = vector<bool>(bwt_s.size(),false);
+			auto pred_bv = std::vector<bool>(bwt_s.size(),false);
 
 			for(auto p : samples_first_vec){
 
@@ -128,8 +128,8 @@ public:
 		//last text position must be sampled
 		assert(pred[pred.size()-1]);
 
-		samples_last = int_vector<>(r,0,log_n); //text positions corresponding to last characters in BWT runs, in BWT order
-		pred_to_run = int_vector<>(r,0,log_r); //stores the BWT run (0...R-1) corresponding to each position in pred, in text order
+		samples_last = sdsl::int_vector<>(r,0,log_n); //text positions corresponding to last characters in BWT runs, in BWT order
+		pred_to_run = sdsl::int_vector<>(r,0,log_r); //stores the BWT run (0...R-1) corresponding to each position in pred, in text order
 
 		for(ulint i=0;i<samples_last_vec.size();++i){
 
@@ -145,7 +145,7 @@ public:
 
 		}
 
-		cout << " done. " << endl<<endl;
+		std::cout << " done. " << std::endl<<std::endl;
 
 	}
 
@@ -289,7 +289,7 @@ public:
 	/*
 	 * Return BWT range of pattern P
 	 */
-	range_t count(const string &P) const {
+	range_t count(const std::string &P) const {
 
 		auto range = full_range();
 		ulint m = P.size();
@@ -304,7 +304,7 @@ public:
 	/*
 	 * Return number of occurrences of P in the text
 	 */
-	ulint occ(const string &P) const {
+	ulint occ(const std::string &P) const {
 
 		auto rn = count(P);
 
@@ -313,7 +313,7 @@ public:
 	}
 
 	/*
-	 * iterator locate(string &P){
+	 * iterator locate(std::string &P){
 	 *
 	 * 	return iterator to iterate over all occurrences without storing them
 	 * 	in memory
@@ -325,11 +325,11 @@ public:
 	 * locate all occurrences of P and return them in an array
 	 * (space consuming if result is big).
 	 */
-	vector<ulint> locate_all(const string& P) const {
+	std::vector<ulint> locate_all(const std::string& P) const {
 
-		vector<ulint> OCC;
+		std::vector<ulint> OCC;
 
-		pair<range_t, ulint> res = count_and_get_occ(P);
+		std::pair<range_t, ulint> res = count_and_get_occ(P);
 
 		ulint L = std::get<0>(res).first;
 		ulint R = std::get<0>(res).second;
@@ -372,7 +372,7 @@ public:
 	/*
 	 * get BWT in string format
 	 */
-	string get_bwt() const {
+	std::string get_bwt() const {
 		return bwt.toString();
 	}
 
@@ -408,7 +408,7 @@ public:
 
 		in.read((char*)&terminator_position,sizeof(terminator_position));
 
-		F = vector<ulint>(256);
+		F = std::vector<ulint>(256);
 		in.read((char*)F.data(),256*sizeof(ulint));
 
 		bwt.load(in);
@@ -425,9 +425,9 @@ public:
 	 * save the structure to the path specified.
 	 * \param path_prefix prefix of the index files. suffix ".ri" will be automatically added
 	 */
-	void save_to_file(const string& path_prefix) const {
+	void save_to_file(const std::string& path_prefix) const {
 
-		string path = string(path_prefix).append(".ri");
+		std::string path = std::string(path_prefix).append(".ri");
 
 		std::ofstream out(path);
 		serialize(out);
@@ -439,7 +439,7 @@ public:
 	 * load the structure from the path specified.
 	 * \param path: full file name
 	 */
-	void load_from_file(const string& path){
+	void load_from_file(const std::string& path){
 
 		std::ifstream in(path);
 		load(in);
@@ -461,17 +461,17 @@ public:
 
 	ulint print_space() const {
 
-		cout << "Number of runs = " << bwt.number_of_runs() << endl<<endl;
+		std::cout << "Number of runs = " << bwt.number_of_runs() << std::endl<<std::endl;
 
 		ulint tot_bytes = bwt.print_space();
 
-		cout << "\nTOT BWT space: " << tot_bytes << " Bytes" <<endl<<endl;
+		std::cout << "\nTOT BWT space: " << tot_bytes << " Bytes" <<std::endl<<std::endl;
 
 		return tot_bytes;
 
 	}
 
-private:
+//private:
 
 	/*
 	 * returns <<l,r>, SA[r] >, where l,r are the inclusive ranges of the pattern P. If P does not occur, then l>r
@@ -479,7 +479,7 @@ private:
 	 * returns <range, j,k>
 	 *
 	 */
-	pair<range_t, ulint> count_and_get_occ(const string &P) const {
+	std::pair<range_t, ulint> count_and_get_occ(const std::string_view &P) const {
 
 		//k = SA[r]
 		ulint k = 0;
@@ -544,19 +544,20 @@ private:
 
 	}
 
+private:
 	/*
 	 * returns a triple containing BWT of input string
 	 * (uses 0x1 character as terminator), text positions corresponding
 	 * to first letters in BWT runs (plus their ranks from 0 to R-1), and text positions corresponding
 	 * to last letters in BWT runs (in BWT order)
 	 */
-	tuple<string, vector<pair<ulint, ulint> >, vector<ulint> > sufsort(const string &s) const {
+	std::tuple<std::string, std::vector<std::pair<ulint, ulint> >, std::vector<ulint> > sufsort(const std::string &s) const {
 
-		string bwt_s;
+		std::string bwt_s;
 
-	    cache_config cc;
+	    sdsl::cache_config cc;
 
-	    int_vector<8> text(s.size());
+	    sdsl::int_vector<8> text(s.size());
 	    assert(text.size()==s.size());
 
 	    for(ulint i=0;i<s.size();++i)
@@ -566,16 +567,16 @@ private:
 
 	    append_zero_symbol(text);
 
-	    store_to_cache(text, conf::KEY_TEXT, cc);
+	    store_to_cache(text, sdsl::conf::KEY_TEXT, cc);
 
-	    construct_config::byte_algo_sa = sais ? SE_SAIS : LIBDIVSUFSORT;
+	    sdsl::construct_config::byte_algo_sa = sais ? sdsl::SE_SAIS : sdsl::LIBDIVSUFSORT;
 	    construct_sa<8>(cc);
 
 	    //now build BWT from SA
-	    int_vector_buffer<> sa(cache_file_name(conf::KEY_SA, cc));
+	    sdsl::int_vector_buffer<> sa(cache_file_name(sdsl::conf::KEY_SA, cc));
 
-	    vector<pair<ulint, ulint> > samples_first; 	//text positions corresponding to first characters in BWT runs, and their ranks 0...R-1
-	    vector<ulint> samples_last;	 				//text positions corresponding to last characters in BWT runs
+	    std::vector<std::pair<ulint, ulint> > samples_first; 	//text positions corresponding to first characters in BWT runs, and their ranks 0...R-1
+	    std::vector<ulint> samples_last;	 				//text positions corresponding to last characters in BWT runs
 
 	    {
 
@@ -626,14 +627,14 @@ private:
 
 	    assert(samples_first.size() == samples_last.size());
 
-	    sdsl::remove(cache_file_name(conf::KEY_TEXT, cc));
-	    sdsl::remove(cache_file_name(conf::KEY_SA, cc));
+	    sdsl::remove(cache_file_name(sdsl::conf::KEY_TEXT, cc));
+	    sdsl::remove(cache_file_name(sdsl::conf::KEY_SA, cc));
 
-	    return tuple<string, vector<pair<ulint, ulint> >, vector<ulint> >(bwt_s, samples_first, samples_last);
+	    return std::tuple<std::string, std::vector<std::pair<ulint, ulint> >, std::vector<ulint> >(bwt_s, samples_first, samples_last);
 
 	}
 
-	static bool contains_reserved_chars(const string &s){
+	static bool contains_reserved_chars(const std::string &s){
 
 		for(auto c : s)
 			if(c == 0 or c == 1)
@@ -652,7 +653,7 @@ private:
 	 */
 
 	//F column of the BWT (vector of 256 elements)
-	vector<ulint> F;
+	std::vector<ulint> F;
 	//L column of the BWT, run-length compressed
 	rle_string_t bwt;
 	ulint terminator_position = 0;
@@ -661,8 +662,8 @@ private:
 
 	//the predecessor structure on positions corresponding to first chars in BWT runs
 	sparse_bv_type pred;
-	int_vector<> samples_last; //text positions corresponding to last characters in BWT runs, in BWT order
-	int_vector<> pred_to_run; //stores the BWT run (0...R-1) corresponding to each position in pred, in text order
+	sdsl::int_vector<> samples_last; //text positions corresponding to last characters in BWT runs, in BWT order
+	sdsl::int_vector<> pred_to_run; //stores the BWT run (0...R-1) corresponding to each position in pred, in text order
 
 };
 

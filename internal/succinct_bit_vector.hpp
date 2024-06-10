@@ -12,8 +12,8 @@
 
 #include <vector>
 
-using namespace std;
-using namespace sdsl;
+//using namespace std;
+//using namespace sdsl;
 
 #ifndef ulint
 typedef uint64_t ulint;
@@ -37,7 +37,7 @@ public:
 	/*
 	 * constructor. build bitvector given a vector of bools
 	 */
-	succinct_bit_vector(vector<bool> b){
+	succinct_bit_vector(std::vector<bool> b){
 
 		bv = bit_vector(b.size());
 

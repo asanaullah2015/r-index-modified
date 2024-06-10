@@ -14,8 +14,8 @@
 
 #include <vector>
 
-using namespace std;
-using namespace sdsl;
+//using namespace std;
+//using namespace sdsl;
 
 #ifndef ulint
 typedef uint64_t ulint;
@@ -39,40 +39,40 @@ public:
 	/*
 	 * constructor. build bitvector given a vector of bools
 	 */
-	sparse_hyb_vector(vector<bool> &b){
+	sparse_hyb_vector(std::vector<bool> &b){
 
 		if(b.size()==0) return;
 
 		u = b.size();
 
-		bit_vector bv(b.size());
+		sdsl::bit_vector bv(b.size());
 
 		for(uint64_t i=0;i<b.size();++i)
 			bv[i] = b[i];
 
-		sdv = hyb_vector<>(bv);
-		rank1 = hyb_vector<>::rank_1_type(&sdv);
-		select1 = hyb_vector<>::select_1_type(&sdv);
+		sdv = sdsl::hyb_vector<>(bv);
+		rank1 = sdsl::hyb_vector<>::rank_1_type(&sdv);
+		select1 = sdsl::hyb_vector<>::select_1_type(&sdv);
 
 	}
 
 	/*
 	 * constructor. build bitvector given a bit_vector
 	 */
-	sparse_hyb_vector(bit_vector &bv){
+	sparse_hyb_vector(sdsl::bit_vector &bv){
 
-		sdv = hyb_vector<>(bv);
-		rank1 = hyb_vector<>::rank_1_type(&sdv);
-		select1 = hyb_vector<>::select_1_type(&sdv);
+		sdv = sdsl::hyb_vector<>(bv);
+		rank1 = sdsl::hyb_vector<>::rank_1_type(&sdv);
+		select1 = sdsl::hyb_vector<>::select_1_type(&sdv);
 
 	}
 
 	sparse_hyb_vector & operator= (const sparse_hyb_vector & other) {
 
 		u = other.sdv.size();
-		sdv = hyb_vector<>(other.sdv);
-		rank1 = hyb_vector<>::rank_1_type(&sdv);
-		select1 = hyb_vector<>::select_1_type(&sdv);
+		sdv = sdsl::hyb_vector<>(other.sdv);
+		rank1 = sdsl::hyb_vector<>::rank_1_type(&sdv);
+		select1 = sdsl::hyb_vector<>::select_1_type(&sdv);
 
 	    return *this;
 	}
@@ -209,8 +209,8 @@ public:
 		if(u==0) return;
 
 		sdv.load(in);
-		rank1 = hyb_vector<>::rank_1_type(&sdv);
-		select1 = hyb_vector<>::select_1_type(&sdv);
+		rank1 = sdsl::hyb_vector<>::rank_1_type(&sdv);
+		select1 = sdsl::hyb_vector<>::select_1_type(&sdv);
 
 	}
 
@@ -219,9 +219,9 @@ private:
 	//bitvector length
 	ulint u = 0;
 
-	hyb_vector<> sdv;
-	hyb_vector<>::rank_1_type rank1;
-	hyb_vector<>::select_1_type select1;
+	sdsl::hyb_vector<> sdv;
+	sdsl::hyb_vector<>::rank_1_type rank1;
+	sdsl::hyb_vector<>::select_1_type select1;
 
 };
 

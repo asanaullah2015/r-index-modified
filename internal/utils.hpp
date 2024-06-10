@@ -2,18 +2,18 @@
 // Use of this source code is governed
 // by a MIT license that can be found in the LICENSE file.
 
-#include <sstream>
-
-using namespace std;
-
 #ifndef UTILS_RI_HPP_
 #define UTILS_RI_HPP_
 
+#include <sstream>
+
+//using namespace std;
+
 using ulint = uint64_t;
 
-string get_time(uint64_t time){
+std::string get_time(uint64_t time){
 
-	stringstream ss;
+	std::stringstream ss;
 
 	if(time>=3600){
 
@@ -49,12 +49,12 @@ uint8_t bitsize(uint64_t x){
 
 //parse pizza&chilli patterns header:
 void header_error(){
-	cout << "Error: malformed header in patterns file" << endl;
-	cout << "Take a look here for more info on the file format: http://pizzachili.dcc.uchile.cl/experiments.html" << endl;
+	std::cout << "Error: malformed header in patterns file" << std::endl;
+	std::cout << "Take a look here for more info on the file format: http://pizzachili.dcc.uchile.cl/experiments.html" << std::endl;
 	exit(0);
 }
 
-ulint get_number_of_patterns(string header){
+ulint get_number_of_patterns(std::string header){
 
 	ulint start_pos = header.find("number=");
 	if (start_pos == std::string::npos or start_pos+7>=header.size())
@@ -72,7 +72,7 @@ ulint get_number_of_patterns(string header){
 
 }
 
-ulint get_patterns_length(string header){
+ulint get_patterns_length(std::string header){
 
 	ulint start_pos = header.find("length=");
 	if (start_pos == std::string::npos or start_pos+7>=header.size())
