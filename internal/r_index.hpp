@@ -39,7 +39,7 @@ public:
 	/*
 	 * Build index
 	 */
-	r_index(std::string &input, bool sais = true){
+	r_index(const std::string &input, const bool sais = true){
 
 		this->sais = sais;
 
