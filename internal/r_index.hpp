@@ -39,22 +39,25 @@ public:
 	/*
 	 * Build index
 	 */
-	r_index(const std::string &input, const bool sais = true){
+	r_index(const std::string &input, const bool sais = true, const bool verbose = true){
 
 		this->sais = sais;
 
 		if(contains_reserved_chars(input)){
 
-			std::cout << "Error: input string contains one of the reserved characters 0x0, 0x1" << std::endl;
+			std::cerr << "Error: input string contains one of the reserved characters 0x0, 0x1" << std::endl;
 			exit(1);
 
 		}
 
-		std::cout << "Text length = " << input.size() << std::endl << std::endl;
+		if (verbose)
+		{
+			std::cout << "Text length = " << input.size() << std::endl << std::endl;
 
-		std::cout << "(1/3) Building BWT and computing SA samples";
-		if(sais) std::cout << " (SE-SAIS) ... " << std::flush;
-		else std::cout << "(DIVSUFSORT) ... " << std::flush;
+			std::cout << "(1/3) Building BWT and computing SA samples";
+			if(sais) std::cout << " (SE-SAIS) ... " << std::flush;
+			else std::cout << "(DIVSUFSORT) ... " << std::flush;
+		}
 
 		//build run-length encoded BWT
 
@@ -64,7 +67,8 @@ public:
 		std::vector<std::pair<ulint,ulint> >& samples_first_vec = get<1>(bwt_and_samples);
 		std::vector<ulint>& samples_last_vec = get<2>(bwt_and_samples);
 
-		std::cout << "done.\n(2/3) RLE encoding BWT ... " << std::flush;
+		if (verbose)
+			std::cout << "done.\n(2/3) RLE encoding BWT ... " << std::flush;
 
 		bwt = rle_string_t(bwt_s);
 
@@ -87,7 +91,8 @@ public:
 
 		assert(input.size()+1 == bwt.size());
 
-		std::cout << "done. " << std::endl<<std::endl;
+		if (verbose)
+			std::cout << "done. " << std::endl<<std::endl;
 
 		r = bwt.number_of_runs();
 
@@ -97,13 +102,15 @@ public:
 		int log_r = bitsize(uint64_t(r));
 		int log_n = bitsize(uint64_t(bwt.size()));
 
-		std::cout << "Number of BWT equal-letter runs: r = " << r << std::endl;
-		std::cout << "Rate n/r = " << double(bwt.size())/r << std::endl;
-		std::cout << "log2(r) = " << log2(double(r)) << std::endl;
-		std::cout << "log2(n/r) = " << log2(double(bwt.size())/r) << std::endl << std::endl;
+		if (verbose)
+		{
+			std::cout << "Number of BWT equal-letter runs: r = " << r << std::endl;
+			std::cout << "Rate n/r = " << double(bwt.size())/r << std::endl;
+			std::cout << "log2(r) = " << log2(double(r)) << std::endl;
+			std::cout << "log2(n/r) = " << log2(double(bwt.size())/r) << std::endl << std::endl;
 
-		std::cout << "(3/3) Building phi function ..." << std::flush;
-
+			std::cout << "(3/3) Building phi function ..." << std::flush;
+		}
 		//sort samples of first positions in runs according to text position
 		std::sort(samples_first_vec.begin(), samples_first_vec.end());
 
@@ -145,7 +152,8 @@ public:
 
 		}
 
-		std::cout << " done. " << std::endl<<std::endl;
+		if (verbose)
+			std::cout << " done. " << std::endl<<std::endl;
 
 	}
 
