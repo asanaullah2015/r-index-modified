@@ -599,35 +599,34 @@ private:
 	            	bwt_s.push_back(TERMINATOR);
 
 	            //Insert samples at begin of runs
-	            if(i>0){
+	            //if(i>0){
 
-	            	if(	i==1 ||									//case 1: i-1 == 0 is at run begin
-						(i>1 && bwt_s[i-1] != bwt_s[i-2])		//case 2: i-1 is at the begin of a run
-	            	){
+	            if(	i==0 ||									//case 1: i == 0 is at run begin
+					(bwt_s[i-1] != bwt_s[i])				//case 2: i is at the begin of a run
+	            ){
 
-	            		samples_first.push_back( {sa[i-1]>0?sa[i-1]-1:sa.size()-1, samples_first.size()} );
-
-	            	}
-
-	            	//check last BWT letter
-	            	if(i==sa.size()-1 && bwt_s[i]!=bwt_s[i-1]) samples_first.push_back( {sa[i]>0?sa[i]-1:sa.size()-1, samples_first.size()} );
-
-				}
-
-	            //Insert samples at end of runs
-	            if(i>0){
-
-	            	if(	bwt_s[i-1] != bwt_s[i]		//i-1 is at the end of a run
-	            	){
-
-	            		samples_last.push_back( sa[i-1]>0?sa[i-1]-1:sa.size()-1 );
-
-	            	}
-
-	            	//last BWT letter is always at end of a run and is never checked in the previous if
-	            	if(i==sa.size()-1) samples_last.push_back( sa[i]>0?sa[i]-1:sa.size()-1 );
+	            	samples_first.push_back( {sa[i]>0?sa[i]-1:sa.size()-1, samples_first.size()} );
 
 	            }
+
+	            //check last BWT letter
+	            //if(i==sa.size()-1 && bwt_s[i]!=bwt_s[i-1]) samples_first.push_back( {sa[i]>0?sa[i]-1:sa.size()-1, samples_first.size()} );
+
+				//}
+
+	            //Insert samples at end of runs
+	            //if(i>0){
+
+	        	if(	i != 0 && bwt_s[i-1] != bwt_s[i]		//i-1 is at the end of a run
+	        	){
+	            	samples_last.push_back( sa[i-1]>0?sa[i-1]-1:sa.size()-1 );
+
+	            }
+
+	            //last BWT letter is always at end of a run and is never checked in the previous if
+	            if(i==sa.size()-1) samples_last.push_back( sa[i]>0?sa[i]-1:sa.size()-1 );
+
+	            //}
 
 	        }
 
